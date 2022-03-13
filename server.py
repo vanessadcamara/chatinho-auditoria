@@ -11,10 +11,11 @@ while(len(senha) not in (16, 24, 32)):
 # criação da chave inicial
 chave_inicial = senha.encode()
 #criação da IV, que possui o mesmo tamanho da chave inicial
-IV = b"A" * len(chave_inicial) 
+IV = b'A' * len(chave_inicial) 
 # geração da chave que será utilizada nas mensagens
-chave_mensagens = Fernet.generate_key() 
-# criação da função que garante que uma mensagem encriptografada não pode ser manipulada ou lida sem a chave.
+chave_mensagens = Fernet.generate_key()
+print("Chave do fernet:", chave_mensagens)
+# criação da função que garante que uma mensagem encriptografada não pode ser manipulada ou lida sem a chave.
 funcao_cripto_mensagens = Fernet(chave_mensagens)
 
 def encrypt(message):
@@ -22,6 +23,7 @@ def encrypt(message):
     padded_message = Padding.pad(message, 16)
     encrypted_message = encryptor.encrypt(padded_message)
     return encrypted_message
+
 s = socket.socket()
 host = socket.gethostname()
 print(' Server will start on host : ', host)
@@ -33,14 +35,17 @@ conn, addr = s.accept()
 print(addr, 'Has connected to the server\n')
 conn.send(encrypt(chave_mensagens))
 incoming_message = conn.recv(1024)
+print("Mensagem recebida: ", incoming_message)
 incoming_message = funcao_cripto_mensagens.decrypt(incoming_message).decode()
 print(' Client : ', incoming_message)
+
 while 1:
     message = input(str('>> '))
     message = message.encode()
     conn.send(funcao_cripto_mensagens.encrypt(message))
     print('Sent\n')
     incoming_message = conn.recv(1024)
+    print("Mensagem recebida: ", incoming_message)
     incoming_message = funcao_cripto_mensagens.decrypt(incoming_message).decode()
     print(' Client: ', incoming_message, "\n")
     

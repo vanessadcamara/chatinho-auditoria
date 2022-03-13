@@ -24,12 +24,15 @@ s.connect((host, port))
 print('Connected to chat server')
 
 chave_mensagens = s.recv(1024)
+print("Chave recebida criptografada: ", chave_mensagens)
 chave_mensagens = decrypt(chave_mensagens)
+print("Chave recebida descriptografada: ", chave_mensagens)
 funcao_cripto_mensagens = Fernet(chave_mensagens)
-s.send(b'criptografia iniciada')
+s.send(funcao_cripto_mensagens.encrypt(b'criptografia iniciada'))
 
 while 1:
     incoming_message = s.recv(1024)
+    print("Mensagem recebida: ", incoming_message)
     incoming_message = funcao_cripto_mensagens.decrypt(incoming_message).decode()
     print('Server : ', incoming_message, "\n")
     message = input(str('>> '))
