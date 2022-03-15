@@ -3,6 +3,7 @@ from Cryptodome.Cipher import AES
 from Cryptodome.Util import Padding
 from cryptography.fernet import Fernet
 import socket
+from datetime import datetime
 
 # criação da senha
 senha = ''
@@ -55,14 +56,14 @@ mensagem_recebida = conn.recv(1024)
 
 # Descriptografar a mensagem recebida
 mensagem_recebida = funcao_cripto_mensagens.decrypt(mensagem_recebida).decode()
-print('Cliente >> ', mensagem_recebida)
+print('[{}] Cliente >> {}'.format(datetime.today().strftime('%H:%M'), mensagem_recebida))
 
 while 1:
-    mensagem = input('Servidor >> ')
-    mensagem = mensagem.encode() 
+    mensagem = input('[{}] Servidor >> '.format(datetime.today().strftime('%H:%M')))
+    mensagem = mensagem.encode()
     conn.send(funcao_cripto_mensagens.encrypt(mensagem))
     mensagem_recebida = conn.recv(1024)
     # print("Mensagem recebida: ", mensagem_recebida)
     mensagem_recebida = funcao_cripto_mensagens.decrypt(mensagem_recebida).decode()
-    print('Cliente >> ', mensagem_recebida)
+    print('[{}] Cliente >> {}'.format(datetime.today().strftime('%H:%M'), mensagem_recebida))
     
